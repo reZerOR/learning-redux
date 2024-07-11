@@ -2,15 +2,29 @@ import { Pencil, Trash2Icon } from "lucide-react";
 import { Button } from "../ui/button";
 import { removeTodo, toggleComplete, TTodo } from "@/redux/features/todoSlice";
 import { useAppDispatch } from "@/redux/hook";
+import { useUpdateTodosMutation } from "@/redux/api/api";
 
-const TodoCard = ({ title, description, id, isCompleted, priority }: TTodo) => {
+const TodoCard = ({
+  title,
+  description,
+  _id,
+  isCompleted,
+  priority,
+}: TTodo) => {
   const dispatch = useAppDispatch();
+  const [updateTodo, { isLoading }] = useUpdateTodosMutation();
   const deleteTodo = () => {
     dispatch(removeTodo(id));
   };
 
   const toggle = () => {
-    dispatch(toggleComplete(id));
+    // dispatch(toggleComplete(id));
+
+    const options = {
+      id: _id,
+      data: { title, description, priority, isCompleted: !isCompleted },
+    };
+    updateTodo(options);
   };
   return (
     <div className="bg-white rounded-md flex justify-between items-center p-3">
@@ -20,6 +34,7 @@ const TodoCard = ({ title, description, id, isCompleted, priority }: TTodo) => {
         className="mr-3"
         name="complete"
         id="complete"
+        defaultChecked={isCompleted}
       />
       <p className="flex-1">{title}</p>
       <p className="flex-[2]">{description}</p>
